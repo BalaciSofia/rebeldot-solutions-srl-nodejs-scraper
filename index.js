@@ -33,43 +33,58 @@ function parseJobsFromHtml(html) {
 
   $('a[href*="/jobs/"]').each((i, el) => {
     const $el = $(el);
-    const url = "https://careers.rebeldot.com" + $el.attr("href");
+    let href = $el.attr("href") || "";
+    const url = href.startsWith("http") ? href : "https://careers.rebeldot.com" + href;
 
-    const title = $el.find("span[class*='title'], .text-lg, h2, h3").first().text().trim()
-      || $el.contents().filter((_, n) => n.nodeType === 3).first().text().trim()
-      || $el.find("div").first().text().trim();
+    const title = $el.contents().filter((_, n) => n.type === 'text').text().trim()
+      || $el.text().trim()
+      || "";
 
     if (!title || title.length > 100) return;
 
-    const text = $el.text().trim();
+    const detailsSpan = $el.next("span.text-base");
+    const detailsText = detailsSpan.length ? detailsSpan.text().trim() : "";
 
     let workmode = "hybrid";
-    if (text.toLowerCase().includes("remote")) workmode = "remote";
-    else if (text.toLowerCase().includes("on-site") || text.toLowerCase().includes("office")) workmode = "on-site";
+    const workSpan = detailsSpan.length ? detailsSpan.find("span.inline-flex").first().text().trim().toLowerCase() : "";
+    if (workSpan.includes("remote")) workmode = "remote";
+    else if (workSpan.includes("on-site") || workSpan.includes("office")) workmode = "on-site";
 
-    const locations = [];
-    if (text.toLowerCase().includes("cluj")) locations.push("Cluj-Napoca");
-    if (text.toLowerCase().includes("brașov") || text.toLowerCase().includes("brasov")) locations.push("Brașov");
-    if (text.toLowerCase().includes("oradea")) locations.push("Oradea");
-    if (text.toLowerCase().includes("bucurești") || text.toLowerCase().includes("bucharest")) locations.push("București");
-    if (text.toLowerCase().includes("timisoara") || text.toLowerCase().includes("timișoara")) locations.push("Timișoara");
-    if (text.toLowerCase().includes("iași") || text.toLowerCase().includes("iasi")) locations.push("Iași");
+    const location = [];
+    detailsSpan.find("span").each((_, s) => {
+      const txt = $(s).text().trim();
+      if (txt.includes(",") && !txt.startsWith("·") && !txt.startsWith("Hybrid") && !txt.startsWith("Remote") && !txt.startsWith("On-site")) {
+        txt.split(",").forEach(part => {
+          const city = part.trim();
+          if (city && city !== "·") location.push(city);
+        });
+      }
+    });
+    if (location.length === 0 && detailsText.toLowerCase().includes("cluj")) location.push("Cluj-Napoca");
 
-    if (locations.length === 0) locations.push("România");
+    const text = (title + " " + detailsText).toLowerCase();
+
+    if (location.length === 0) {
+      if (text.includes("cluj")) location.push("Cluj-Napoca");
+      if (text.includes("brașov") || text.includes("brasov")) location.push("Brașov");
+      if (text.includes("oradea")) location.push("Oradea");
+      if (text.includes("bucurești") || text.includes("bucharest")) location.push("București");
+    }
+    if (location.length === 0) location.push("România");
 
     const tags = [];
-    if (text.toLowerCase().includes("java")) tags.push("java");
-    if (text.toLowerCase().includes("react")) tags.push("react");
-    if (text.toLowerCase().includes("python")) tags.push("python");
-    if (text.toLowerCase().includes("devops")) tags.push("devops");
-    if (text.toLowerCase().includes("azure")) tags.push("azure");
-    if (text.toLowerCase().includes("genai") || text.toLowerCase().includes("generative ai")) tags.push("generative ai");
-    if (text.toLowerCase().includes("ai") || text.toLowerCase().includes("artificial intelligence")) tags.push("ai");
-    if (text.toLowerCase().includes("data")) tags.push("data");
-    if (text.toLowerCase().includes(".net")) tags.push(".net");
-    if (text.toLowerCase().includes("ux") || text.toLowerCase().includes("designer")) tags.push("ux design");
-    if (text.toLowerCase().includes("architect")) tags.push("architect");
-    if (text.toLowerCase().includes("security") || text.toLowerCase().includes("devsecops")) tags.push("security");
+    if (text.includes("java")) tags.push("java");
+    if (text.includes("react")) tags.push("react");
+    if (text.includes("python")) tags.push("python");
+    if (text.includes("devops")) tags.push("devops");
+    if (text.includes("azure")) tags.push("azure");
+    if (text.includes("genai") || text.includes("generative ai")) tags.push("generative ai");
+    if (text.includes("ai") || text.includes("artificial intelligence")) tags.push("ai");
+    if (text.includes("data")) tags.push("data");
+    if (text.includes(".net")) tags.push(".net");
+    if (text.includes("ux") || text.includes("designer")) tags.push("ux design");
+    if (text.includes("architect")) tags.push("architect");
+    if (text.includes("security") || text.includes("devsecops")) tags.push("security");
 
     const uid = url.split("/").pop() || title.toLowerCase().replace(/\s+/g, "-");
 
@@ -78,7 +93,7 @@ function parseJobsFromHtml(html) {
       title,
       uid,
       workmode,
-      location: [...new Set(locations)],
+      location: [...new Set(location)],
       tags: [...new Set(tags)]
     });
   });

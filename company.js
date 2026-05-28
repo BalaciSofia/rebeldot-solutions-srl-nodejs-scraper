@@ -1,7 +1,7 @@
 import fetch from "node-fetch";
 import fs from "fs";
 import { querySOLR, deleteJobsByCIF } from "./solr.js";
-import { getCompanyFromANAFWithFallback, searchCompany } from "./demoanaf.js";
+import { getCompanyFromANAFWithFallback } from "./demoanaf.js";
 
 const Peviitor_API_URL = "https://api.peviitor.ro/v1/company/";
 const COMPANY_BRAND = "RebelDot";
@@ -10,6 +10,7 @@ export function getCompanyBrand() {
   return COMPANY_BRAND;
 }
 
+const COMPANY_CIF = "39271439";
 const COMPANY_MODEL_FIELDS = [
   { name: "id", required: true, type: "string" },
   { name: "company", required: true, type: "string" },
@@ -76,32 +77,10 @@ function loadCachedCompanyData() {
 
 export async function getCompanyData() {
   const cachedData = loadCachedCompanyData();
+  const targetCif = COMPANY_CIF;
 
-  if (!cachedData?.summary?.cif) {
-    const searchResults = await searchCompany(COMPANY_BRAND);
-
-    if (!searchResults || searchResults.length === 0) {
-      throw new Error(`No companies found for brand: ${COMPANY_BRAND}`);
-    }
-
-    const exactMatch = searchResults.find(c =>
-      (c.name.toUpperCase().startsWith(COMPANY_BRAND.toUpperCase() + " ") ||
-       c.name.toUpperCase().includes(" " + COMPANY_BRAND.toUpperCase() + " ")) &&
-      c.statusLabel === "Funcțiune"
-    );
-
-    let selectedCIF;
-    if (!exactMatch) {
-      const activeMatch = searchResults.find(c => c.statusLabel === "Funcțiune");
-      if (!activeMatch) {
-        throw new Error(`No active company found for brand: ${COMPANY_BRAND}`);
-      }
-      selectedCIF = activeMatch.cui;
-    } else {
-      selectedCIF = exactMatch.cui;
-    }
-
-    const anafData = await getCompanyFromANAFWithFallback(selectedCIF, cachedData?.anaf);
+  if (!cachedData?.summary?.cif || cachedData.summary.cif !== targetCif) {
+    const anafData = await getCompanyFromANAFWithFallback(targetCif, cachedData?.anaf);
 
     if (!anafData) {
       throw new Error("No data from ANAF and no cache - cannot proceed with scraping");
@@ -113,13 +92,23 @@ export async function getCompanyData() {
       throw new Error("ANAF returned no CUI - cannot proceed with scraping");
     }
 
+    console.log(`ANAF returned name: ${anafData.name}`);
+    console.log(`ANAF returned CUI: ${anafData.cui}`);
+    console.log(`ANAF status: ${anafData.inactive ? "INACTIVE" : "ACTIVE"}`);
+
     const company = anafData.name.toUpperCase();
     const cif = anafData.cui.toString();
     const active = !anafData.inactive;
 
     return { company, cif, active, anafData };
   } else {
+    console.log(`Using cached company data for CIF: ${cachedData.summary.cif}`);
     const anafData = cachedData.anaf;
+
+    console.log(`Cached name: ${anafData.name}`);
+    console.log(`Cached CUI: ${anafData.cui}`);
+    console.log(`Cached status: ${anafData.inactive ? "INACTIVE" : "ACTIVE"}`);
+
     const company = anafData.name.toUpperCase();
     const cif = anafData.cui.toString();
     const active = !anafData.inactive;
