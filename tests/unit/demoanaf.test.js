@@ -2,7 +2,7 @@ import { jest } from '@jest/globals';
 
 const CACHED_ANAF_DATA = {
   cui: 39271439,
-  name: "REBELDOT SOLUTIONS SRL",
+  name: "REBELDOT SOLUTIONS S.R.L.",
   address: "JUD. CLUJ, SAT SĂLICEA COM. CIURILA, G SĂLICEA, NR.104F",
   registrationNumber: "J2018001724122",
   caenCode: "6210",
@@ -47,7 +47,7 @@ describe('demoanaf.js', () => {
 
       expect(data).toBeDefined();
       expect(data.cui).toBe(39271439);
-      expect(data.name).toBe('REBELDOT SOLUTIONS SRL');
+      expect(data.name).toBe('REBELDOT SOLUTIONS S.R.L.');
       expect(data).toHaveProperty('address');
       expect(data).toHaveProperty('registrationNumber');
     }, 120000);

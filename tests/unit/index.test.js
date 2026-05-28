@@ -70,7 +70,7 @@ describe('index.js Component Tests', () => {
         workmode: 'hybrid'
       };
 
-      const COMPANY_NAME = 'REBELDOT SOLUTIONS SRL';
+      const COMPANY_NAME = 'REBELDOT SOLUTIONS S.R.L.';
       const COMPANY_CIF = '39271439';
 
       const result = index.mapToJobModel(rawJob, COMPANY_CIF, COMPANY_NAME);

@@ -1,4 +1,4 @@
-# REBELDOT SOLUTIONS SRL - Job Scraper
+# REBELDOT SOLUTIONS S.R.L. - Job Scraper
 
 [![WebScraper RebelDot to Peviitor](https://github.com/BalaciSofia/rebeldot-solutions-srl-nodejs-scraper/actions/workflows/scrape.yml/badge.svg)](https://github.com/BalaciSofia/rebeldot-solutions-srl-nodejs-scraper/actions/workflows/scrape.yml)
 [![Automation Tests](https://github.com/BalaciSofia/rebeldot-solutions-srl-nodejs-scraper/actions/workflows/test.yml/badge.svg)](https://github.com/BalaciSofia/rebeldot-solutions-srl-nodejs-scraper/actions/workflows/test.yml)

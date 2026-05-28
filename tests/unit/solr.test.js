@@ -97,7 +97,7 @@ describe('solr.js', () => {
 
         expect(rd).toHaveProperty('id', '39271439');
         expect(rd).toHaveProperty('company');
-        expect(rd.company).toBe('REBELDOT SOLUTIONS SRL');
+        expect(rd.company).toBe('REBELDOT SOLUTIONS S.R.L.');
 
         expect(rd).toHaveProperty('brand', 'RebelDot');
         expect(rd).toHaveProperty('status', 'activ');

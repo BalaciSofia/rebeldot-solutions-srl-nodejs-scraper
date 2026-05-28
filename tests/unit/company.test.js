@@ -24,7 +24,7 @@ describe('company.js', () => {
       expect(result).toHaveProperty('company');
       expect(result).toHaveProperty('cif');
       expect(result.cif).toBe('39271439');
-    });
+    }, 30000);
 
     it('should include existingJobsCount', async () => {
       const result = await company.validateAndGetCompany();

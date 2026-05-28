@@ -24,7 +24,7 @@ jobs:
 
           if [ "$EXISTING" -eq "0" ]; then
             echo "RebelDot not found - adding to company core..."
-            echo '[{"id":"39271439","company":"REBELDOT SOLUTIONS SRL","brand":"RebelDot","status":"activ","location":["Cluj-Napoca"],"website":["https://www.rebeldot.com"],"career":["https://careers.rebeldot.com"],"lastScraped":"2026-05-28","scraperFile":"https://raw.githubusercontent.com/BalaciSofia/rebeldot-solutions-srl-nodejs-scraper/main/.github/workflows/scrape.yml"}]' > company_data.json
+            echo '[{"id":"39271439","company":"REBELDOT SOLUTIONS S.R.L.","brand":"RebelDot","status":"activ","location":["Cluj-Napoca"],"website":["https://www.rebeldot.com"],"career":["https://careers.rebeldot.com"],"lastScraped":"2026-05-28","scraperFile":"https://raw.githubusercontent.com/BalaciSofia/rebeldot-solutions-srl-nodejs-scraper/main/.github/workflows/scrape.yml"}]' > company_data.json
 
             curl -s --user "${SOLR_AUTH}" \
               "https://solr.peviitor.ro/solr/company/update/json?commit=true" \
