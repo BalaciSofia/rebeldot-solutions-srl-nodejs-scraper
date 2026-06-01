@@ -2,6 +2,7 @@
 
 [![WebScraper RebelDot to Peviitor](https://github.com/BalaciSofia/rebeldot-solutions-srl-nodejs-scraper/actions/workflows/scrape.yml/badge.svg)](https://github.com/BalaciSofia/rebeldot-solutions-srl-nodejs-scraper/actions/workflows/scrape.yml)
 [![Automation Tests](https://github.com/BalaciSofia/rebeldot-solutions-srl-nodejs-scraper/actions/workflows/test.yml/badge.svg)](https://github.com/BalaciSofia/rebeldot-solutions-srl-nodejs-scraper/actions/workflows/test.yml)
+[![GitHub Pages](https://github.com/BalaciSofia/rebeldot-solutions-srl-nodejs-scraper/actions/workflows/deploy.yml/badge.svg)](https://github.com/BalaciSofia/rebeldot-solutions-srl-nodejs-scraper/actions/workflows/deploy.yml)
 
 A Node.js scraper for extracting job listings from RebelDot careers and storing them in Solr for [peviitor.ro](https://peviitor.ro).
 
