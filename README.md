@@ -79,6 +79,13 @@ npm run scrape
 npm test
 ```
 
+## Robots.txt Policy
+
+Acest scraper respectă regulile din [robots.txt](https://careers.rebeldot.com/robots.txt) al RebelDot Careers. Pentru analiza completă, vezi [ROBOTS.md](ROBOTS.md).
+
+- API-ul `/api/*` este `Disallow` în robots.txt — scraper-ul nu îl folosește, folosind în schimb front-end HTML
+- Scraper-ul este politicos: rate limiting de 500ms între cereri, User-Agent identificabil (`job_seeker_ro_spider`)
+
 ## Workflows
 
 ### Daily Scraping
