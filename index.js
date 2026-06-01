@@ -3,7 +3,7 @@ import * as cheerio from "cheerio";
 import fs from "fs";
 import { fileURLToPath } from "url";
 import { validateAndGetCompany } from "./company.js";
-import { querySOLR, deleteJobByUrl, upsertJobs } from "./solr.js";
+import { querySOLR, deleteJobByUrl, upsertJobs, upsertCompany } from "./solr.js";
 
 const COMPANY_CIF = "39271439";
 const TIMEOUT = 10000;
@@ -179,6 +179,22 @@ async function main() {
     console.log("=== Step 2: Validate company via ANAF ===");
     const { company, cif } = await validateAndGetCompany();
     COMPANY_NAME = company;
+
+    try {
+      await upsertCompany({
+        id: cif,
+        company,
+        brand: "RebelDot",
+        status: "activ",
+        location: ["Cluj-Napoca"],
+        website: ["https://www.rebeldot.com"],
+        career: ["https://careers.rebeldot.com"],
+        lastScraped: new Date().toISOString().split('T')[0],
+        scraperFile: "https://raw.githubusercontent.com/BalaciSofia/rebeldot-solutions-srl-nodejs-scraper/main/.github/workflows/scrape.yml"
+      });
+    } catch (err) {
+      console.log(`Note: Could not upsert company to SOLR core: ${err.message}`);
+    }
 
     console.log("=== Step 3: Scrape jobs from RebelDot careers ===");
     const html = await fetchJobsPage();

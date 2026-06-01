@@ -1,7 +1,7 @@
 import fetch from "node-fetch";
 import fs from "fs";
 import { querySOLR, deleteJobsByCIF } from "./solr.js";
-import { getCompanyFromANAFWithFallback } from "./demoanaf.js";
+import { getCompanyFromANAFWithFallback } from "./src/anaf.js";
 
 const Peviitor_API_URL = "https://api.peviitor.ro/v1/company/";
 const COMPANY_BRAND = "RebelDot";
@@ -27,7 +27,7 @@ const COMPANY_MODEL_FIELDS = [
 async function getCompanyFromPeviitor(companyName) {
   const url = `${Peviitor_API_URL}?name=${encodeURIComponent(companyName)}`;
   const res = await fetch(url, {
-    headers: { "User-Agent": "Mozilla/5.0" }
+    headers: { "User-Agent": "job_seeker_ro_spider" }
   });
 
   if (!res.ok) {
