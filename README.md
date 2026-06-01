@@ -2,7 +2,6 @@
 
 [![WebScraper RebelDot to Peviitor](https://github.com/BalaciSofia/rebeldot-solutions-srl-nodejs-scraper/actions/workflows/scrape.yml/badge.svg)](https://github.com/BalaciSofia/rebeldot-solutions-srl-nodejs-scraper/actions/workflows/scrape.yml)
 [![Automation Tests](https://github.com/BalaciSofia/rebeldot-solutions-srl-nodejs-scraper/actions/workflows/test.yml/badge.svg)](https://github.com/BalaciSofia/rebeldot-solutions-srl-nodejs-scraper/actions/workflows/test.yml)
-[![GitHub Pages](https://github.com/BalaciSofia/rebeldot-solutions-srl-nodejs-scraper/actions/workflows/deploy.yml/badge.svg)](https://github.com/BalaciSofia/rebeldot-solutions-srl-nodejs-scraper/actions/workflows/deploy.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![JavaScript](https://img.shields.io/badge/javascript-ESM-F7DF1E?logo=javascript&logoColor=black)](https://ecma-international.org/)
 [![Node.js](https://img.shields.io/badge/node-24-339933?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
