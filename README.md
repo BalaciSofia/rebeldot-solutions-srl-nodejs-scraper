@@ -22,8 +22,11 @@ This project automates the daily scraping of RebelDot job listings in Romania, e
 ```
 ├── index.js           # Main scraper entry point
 ├── company.js         # Company validation via ANAF
-├── demoanaf.js        # ANAF API integration
+├── demoanaf.js        # ANAF CLI wrapper
 ├── solr.js            # Solr database operations
+├── validate-jobs.js   # Job URL validator
+├── src/
+│   └── anaf.js        # Core ANAF library
 ├── company.json       # Cached company data
 ├── tests/             # Test suite
 │   ├── unit/
@@ -32,8 +35,18 @@ This project automates the daily scraping of RebelDot job listings in Romania, e
 ├── .github/
 │   └── workflows/
 │       ├── scrape.yml     # Daily scraping workflow
-│       └── test.yml      # Test automation
-└── package.json
+│       ├── test.yml      # Test automation
+│       └── deploy.yml    # GitHub Pages deploy
+├── AGENTS.md           # AI agent rules
+├── ISSUES.md           # Issue process
+├── ROBOTS.md           # Robots.txt analysis
+├── CONTRIBUTING.md     # Contribution guide
+├── SECURITY.md         # Security policy
+├── CHANGELOG.md        # Version history
+├── instructions.md     # Workflow documentation
+├── files.md            # File roles
+├── company-model.md    # Company schema
+└── job-model.md        # Job schema
 ```
 
 ## Setup

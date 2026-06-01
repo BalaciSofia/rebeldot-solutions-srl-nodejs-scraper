@@ -33,7 +33,9 @@ Target: https://careers.rebeldot.com/jobs
 | `index.js` | Main entry point - full workflow |
 | `company.js` | Validates company via ANAF + Peviitor |
 | `solr.js` | SOLR operations module |
-| `demoanaf.js` | ANAF API module |
+| `src/anaf.js` | Core ANAF API module |
+| `demoanaf.js` | CLI wrapper around src/anaf.js |
+| `validate-jobs.js` | Job URL validator |
 
 ## API Endpoints
 

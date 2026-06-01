@@ -5,28 +5,28 @@ trebuie propagate în RebelDot. Vezi [FROM-EPAM.md](FROM-EPAM.md) pentru context
 
 ## Checklist
 
-- [ ] `AGENTS.md` — reguli AI, comenzi test, structură module
-- [ ] `ISSUES.md` — proces contribuție, reguli issue
-- [ ] `CONTRIBUTING.md` — ghid contribuție
-- [ ] `SECURITY.md` — politici securitate
-- [ ] `ROBOTS.md` — analiză robots.txt (specific sursei)
-- [ ] `TOPICS.md` — topic-uri GitHub About
-- [ ] `UPDATE-REPO-ABOUT.md` — ghid actualizare About
-- [ ] `src/anaf.js` — modul ANAF modular
-- [ ] `validate-jobs.js` — validator URL-uri job
-- [ ] `tests/validate-rebeldot-jobs.js` — validator specific RebelDot
-- [ ] `tests/unit/` — teste unitare
-- [ ] `tests/integration/` — teste integrare
-- [ ] `tests/e2e/` — teste end-to-end
-- [ ] `.github/workflows/scrape.yml` — workflow scrape zilnic
-- [ ] `.github/workflows/test.yml` — workflow testare automată
-- [ ] `.github/workflows/deploy.yml` — deploy GitHub Pages
-- [ ] `.github/CODEOWNERS` — code owners
-- [ ] `README.md` — badge-uri, features, structură proiect
-- [ ] `package.json` — scripts, jest config
-- [ ] `.gitignore` — fișiere ignorate
-- [ ] `company.json` — date companie (CIF, nume)
-- [ ] `UPDATE-REPO-ABOUT.md` — descriere, website, topics
+- [x] `AGENTS.md` — reguli AI, comenzi test, structură module
+- [x] `ISSUES.md` — proces contribuție, reguli issue
+- [x] `CONTRIBUTING.md` — ghid contribuție
+- [x] `SECURITY.md` — politici securitate
+- [x] `ROBOTS.md` — analiză robots.txt (specific sursei)
+- [x] `TOPICS.md` — topic-uri GitHub About
+- [x] `UPDATE-REPO-ABOUT.md` — ghid actualizare About
+- [x] `src/anaf.js` — modul ANAF modular
+- [x] `validate-jobs.js` — validator URL-uri job
+- [x] `tests/validate-rebeldot-jobs.js` — validator specific RebelDot
+- [x] `tests/unit/` — teste unitare
+- [x] `tests/integration/` — teste integrare
+- [x] `tests/e2e/` — teste end-to-end
+- [x] `.github/workflows/scrape.yml` — workflow scrape zilnic
+- [x] `.github/workflows/test.yml` — workflow testare automată
+- [x] `.github/workflows/deploy.yml` — deploy GitHub Pages
+- [x] `.github/CODEOWNERS` — code owners
+- [ ] `README.md` — badge-uri, features, structură proiect (actualizat structura)
+- [x] `package.json` — scripts, jest config
+- [x] `.gitignore` — fișiere ignorate
+- [ ] `company.json` — date companie (CIF, nume) (se generează la runtime)
+- [ ] `UPDATE-REPO-ABOUT.md` — descriere, website, topics (necesită owner)
 
 ## Cum se sincronizează
 

@@ -27,10 +27,10 @@ NEVER use paths outside the project (e.g. `C:\Users\...\AppData\Local\Temp\openc
 npm test
 
 # Integration tests (ANAF public API, SOLR conditional)
-node --experimental-vm-modules node_modules/jest/bin/jest.js --testPathPattern=integration --testTimeout=60000
+node --no-deprecation --experimental-vm-modules node_modules/jest/bin/jest.js --testPathPattern=integration --testTimeout=60000
 
 # E2E tests (real RebelDot API, SOLR conditional)
-node --experimental-vm-modules node_modules/jest/bin/jest.js --testPathPattern=e2e --testTimeout=60000
+node --no-deprecation --experimental-vm-modules node_modules/jest/bin/jest.js --testPathPattern=e2e --testTimeout=60000
 ```
 
 ### 5. ESM + Jest
