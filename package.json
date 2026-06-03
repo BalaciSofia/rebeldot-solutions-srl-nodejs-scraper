@@ -3,8 +3,12 @@
   "version": "1.0.0",
   "type": "module",
   "main": "index.js",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "scrape": "node --no-deprecation index.js",
+    "scrape:dry": "node --no-deprecation index.js --dry-run",
     "test": "node --no-deprecation --experimental-vm-modules node_modules/jest/bin/jest.js",
     "test:unit": "node --no-deprecation --experimental-vm-modules node_modules/jest/bin/jest.js --testPathPattern=unit",
     "test:integration": "node --no-deprecation --experimental-vm-modules node_modules/jest/bin/jest.js --testPathPattern=integration",

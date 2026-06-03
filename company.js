@@ -1,33 +1,18 @@
 import fetch from "node-fetch";
 import fs from "fs";
+import CONFIG from "./config.js";
 import { querySOLR, deleteJobsByCIF } from "./solr.js";
 import { getCompanyFromANAFWithFallback } from "./src/anaf.js";
 
-const Peviitor_API_URL = "https://api.peviitor.ro/v1/company/";
-const COMPANY_BRAND = "RebelDot";
-
 export function getCompanyBrand() {
-  return COMPANY_BRAND;
+  return CONFIG.COMPANY_BRAND;
 }
 
-const COMPANY_CIF = "39271439";
-const COMPANY_MODEL_FIELDS = [
-  { name: "id", required: true, type: "string" },
-  { name: "company", required: true, type: "string" },
-  { name: "brand", required: false, type: "string" },
-  { name: "group", required: false, type: "string" },
-  { name: "status", required: false, type: "string", allowed: ["activ", "suspendat", "inactiv", "radiat"] },
-  { name: "location", required: false, type: "array" },
-  { name: "website", required: false, type: "array" },
-  { name: "career", required: false, type: "array" },
-  { name: "lastScraped", required: false, type: "string" },
-  { name: "scraperFile", required: false, type: "string" }
-];
-
 async function getCompanyFromPeviitor(companyName) {
-  const url = `${Peviitor_API_URL}?name=${encodeURIComponent(companyName)}`;
+  const url = `${CONFIG.PEVIITOR_API_URL}?name=${encodeURIComponent(companyName)}`;
   const res = await fetch(url, {
-    headers: { "User-Agent": "job_seeker_ro_spider" }
+    headers: { "User-Agent": "job_seeker_ro_spider" },
+    signal: AbortSignal.timeout(CONFIG.FETCH_TIMEOUT_MS)
   });
 
   if (!res.ok) {
@@ -42,7 +27,7 @@ function saveCompanyData(anafData, peviitorData) {
   const companyData = {
     validatedAt: new Date().toISOString(),
     source: "ANAF",
-    brand: COMPANY_BRAND,
+    brand: CONFIG.COMPANY_BRAND,
     anaf: anafData,
     peviitor: peviitorData,
     summary: {
@@ -70,14 +55,16 @@ function loadCachedCompanyData() {
       if (data?.anaf?.cui && data?.anaf?.name) {
         return data;
       }
-    } catch (e) {}
+    } catch (e) {
+      console.warn("Corrupted company.json, re-fetching from ANAF:", e.message);
+    }
   }
   return null;
 }
 
 export async function getCompanyData() {
   const cachedData = loadCachedCompanyData();
-  const targetCif = COMPANY_CIF;
+  const targetCif = CONFIG.COMPANY_CIF;
 
   if (!cachedData?.summary?.cif || cachedData.summary.cif !== targetCif) {
     const anafData = await getCompanyFromANAFWithFallback(targetCif, cachedData?.anaf);
@@ -101,20 +88,20 @@ export async function getCompanyData() {
     const active = !anafData.inactive;
 
     return { company, cif, active, anafData };
-  } else {
-    console.log(`Using cached company data for CIF: ${cachedData.summary.cif}`);
-    const anafData = cachedData.anaf;
-
-    console.log(`Cached name: ${anafData.name}`);
-    console.log(`Cached CUI: ${anafData.cui}`);
-    console.log(`Cached status: ${anafData.inactive ? "INACTIVE" : "ACTIVE"}`);
-
-    const company = anafData.name.toUpperCase();
-    const cif = anafData.cui.toString();
-    const active = !anafData.inactive;
-
-    return { company, cif, active, anafData };
   }
+
+  console.log(`Using cached company data for CIF: ${cachedData.summary.cif}`);
+  const anafData = cachedData.anaf;
+
+  console.log(`Cached name: ${anafData.name}`);
+  console.log(`Cached CUI: ${anafData.cui}`);
+  console.log(`Cached status: ${anafData.inactive ? "INACTIVE" : "ACTIVE"}`);
+
+  const company = anafData.name.toUpperCase();
+  const cif = anafData.cui.toString();
+  const active = !anafData.inactive;
+
+  return { company, cif, active, anafData };
 }
 
 export async function validateAndGetCompany() {
@@ -124,8 +111,10 @@ export async function validateAndGetCompany() {
 
   let peviitorData = null;
   try {
-    peviitorData = await getCompanyFromPeviitor(COMPANY_BRAND);
-  } catch (e) {}
+    peviitorData = await getCompanyFromPeviitor(CONFIG.COMPANY_BRAND);
+  } catch (e) {
+    console.warn("Peviitor API unavailable, proceeding without:", e.message);
+  }
 
   saveCompanyData(anafData, peviitorData);
 

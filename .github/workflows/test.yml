@@ -26,7 +26,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v5
         with:
-          node-version: '24'
+          node-version-file: '.nvmrc'
+          cache: 'npm'
 
       - name: Install dependencies
         run: npm install
@@ -54,7 +55,8 @@ jobs:
         env:
           SOLR_AUTH: ${{ secrets.SOLR_AUTH }}
         run: |
-          EXISTING=$(curl -s --user "${SOLR_AUTH}" \
+          B64=$(echo -n "${SOLR_AUTH}" | base64)
+          EXISTING=$(curl -s -H "Authorization: Basic ${B64}" \
             "https://solr.peviitor.ro/solr/company/select?q=id:39271439&rows=1" | jq '.response.numFound')
 
           echo "RebelDot count in company core: $EXISTING"
@@ -63,7 +65,7 @@ jobs:
             echo "RebelDot not found - adding to company core..."
             echo '[{"id":"39271439","company":"REBELDOT SOLUTIONS S.R.L.","brand":"RebelDot","status":"activ","location":["Cluj-Napoca"],"website":["https://www.rebeldot.com"],"career":["https://careers.rebeldot.com"],"lastScraped":"2026-05-28","scraperFile":"https://raw.githubusercontent.com/BalaciSofia/rebeldot-solutions-srl-nodejs-scraper/main/.github/workflows/scrape.yml"}]' > company_data.json
 
-            curl -s --user "${SOLR_AUTH}" \
+            curl -s -H "Authorization: Basic ${B64}" \
               "https://solr.peviitor.ro/solr/company/update/json?commit=true" \
               -X POST \
               -H "Content-Type: application/json" \
@@ -72,7 +74,7 @@ jobs:
             echo "RebelDot already exists in company core - no action needed"
           fi
 
-          FINAL=$(curl -s --user "${SOLR_AUTH}" \
+          FINAL=$(curl -s -H "Authorization: Basic ${B64}" \
             "https://solr.peviitor.ro/solr/company/select?q=id:39271439&rows=1" | jq '.response.numFound')
 
           echo "RebelDot count after check: $FINAL"
@@ -94,7 +96,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v5
         with:
-          node-version: '24'
+          node-version-file: '.nvmrc'
+          cache: 'npm'
 
       - name: Install dependencies
         run: npm install

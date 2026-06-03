@@ -1,9 +1,12 @@
 import fetch from "node-fetch";
+import CONFIG from "../config.js";
 
-const ANAF_API_URL = "https://demoanaf.ro/api/company/";
-const ANAF_SEARCH_URL = "https://demoanaf.ro/api/search";
-const MAX_RETRIES = 3;
-const RETRY_DELAY_MS = 2000;
+function fetchOpts(timeoutMs = CONFIG.FETCH_TIMEOUT_MS) {
+  return {
+    headers: { "User-Agent": "job_seeker_ro_spider" },
+    signal: AbortSignal.timeout(timeoutMs)
+  };
+}
 
 async function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -12,18 +15,16 @@ async function sleep(ms) {
 export async function getCompanyFromANAF(cif) {
   let lastError = null;
 
-  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+  for (let attempt = 1; attempt <= CONFIG.ANAF_MAX_RETRIES; attempt++) {
     try {
-      const url = `${ANAF_API_URL}${cif}`;
-      const res = await fetch(url, {
-        headers: { "User-Agent": "job_seeker_ro_spider" }
-      });
+      const url = `${CONFIG.ANAF_API_URL}${cif}`;
+      const res = await fetch(url, fetchOpts());
 
       if (!res.ok) {
         lastError = new Error(`ANAF API error: ${res.status}`);
-        if (attempt < MAX_RETRIES) {
-          console.log(`  ANAF attempt ${attempt}/${MAX_RETRIES} failed: ${res.status}, retrying...`);
-          await sleep(RETRY_DELAY_MS);
+        if (attempt < CONFIG.ANAF_MAX_RETRIES) {
+          console.log(`  ANAF attempt ${attempt}/${CONFIG.ANAF_MAX_RETRIES} failed: ${res.status}, retrying...`);
+          await sleep(CONFIG.ANAF_RETRY_DELAY_MS);
         }
         continue;
       }
@@ -50,9 +51,9 @@ export async function getCompanyFromANAF(cif) {
       return data || null;
     } catch (err) {
       lastError = err;
-      if (attempt < MAX_RETRIES) {
-        console.log(`  ANAF attempt ${attempt}/${MAX_RETRIES} failed: ${err.message}, retrying...`);
-        await sleep(RETRY_DELAY_MS);
+      if (attempt < CONFIG.ANAF_MAX_RETRIES) {
+        console.log(`  ANAF attempt ${attempt}/${CONFIG.ANAF_MAX_RETRIES} failed: ${err.message}, retrying...`);
+        await sleep(CONFIG.ANAF_RETRY_DELAY_MS);
       }
     }
   }
@@ -75,31 +76,48 @@ export async function getCompanyFromANAFWithFallback(cif, cachedData = null) {
 }
 
 export async function searchCompany(brand) {
-  const url = `${ANAF_SEARCH_URL}?q=${encodeURIComponent(brand)}&f=name`;
-  const res = await fetch(url, {
-    headers: { "User-Agent": "job_seeker_ro_spider" }
-  });
+  let lastError = null;
 
-  if (!res.ok) {
-    throw new Error(`ANAF search error: ${res.status}`);
+  for (let attempt = 1; attempt <= CONFIG.ANAF_MAX_RETRIES; attempt++) {
+    try {
+      const url = `${CONFIG.ANAF_SEARCH_URL}?q=${encodeURIComponent(brand)}&f=name`;
+      const res = await fetch(url, fetchOpts());
+
+      if (!res.ok) {
+        lastError = new Error(`ANAF search error: ${res.status}`);
+        if (attempt < CONFIG.ANAF_MAX_RETRIES) {
+          console.log(`  ANAF search attempt ${attempt}/${CONFIG.ANAF_MAX_RETRIES} failed: ${res.status}, retrying...`);
+          await sleep(CONFIG.ANAF_RETRY_DELAY_MS);
+        }
+        continue;
+      }
+
+      const json = await res.json();
+
+      const results = json.data || json.results || json;
+
+      const items = Array.isArray(results) ? results : [];
+
+      return items.map(item => ({
+        name: item.name || item.company || "",
+        cui: item.cui || item.cif || "",
+        registrationNumber: item.registrationNumber || item.nrReg || "",
+        county: item.county || item.judet || "",
+        locality: item.locality || item.localitate || "",
+        legalForm: item.legalForm || item.formaJuridica || "",
+        statusLabel: item.statusLabel || item.status || item.stare || null,
+        isInsolvent: item.isInsolvent || item.insolventa || false
+      }));
+    } catch (err) {
+      lastError = err;
+      if (attempt < CONFIG.ANAF_MAX_RETRIES) {
+        console.log(`  ANAF search attempt ${attempt}/${CONFIG.ANAF_MAX_RETRIES} failed: ${err.message}, retrying...`);
+        await sleep(CONFIG.ANAF_RETRY_DELAY_MS);
+      }
+    }
   }
 
-  const json = await res.json();
-
-  const results = json.data || json.results || json;
-
-  const items = Array.isArray(results) ? results : [];
-
-  return items.map(item => ({
-    name: item.name || item.company || "",
-    cui: item.cui || item.cif || "",
-    registrationNumber: item.registrationNumber || item.nrReg || "",
-    county: item.county || item.judet || "",
-    locality: item.locality || item.localitate || "",
-    legalForm: item.legalForm || item.formaJuridica || "",
-    statusLabel: item.statusLabel || item.status || item.stare || null,
-    isInsolvent: item.isInsolvent || item.insolventa || false
-  }));
+  throw lastError || new Error(`ANAF search failed after retries`);
 }
 
 function parseAdministratorsIfNeeded(data) {

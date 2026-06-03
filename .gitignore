@@ -41,6 +41,8 @@ jobs_existing.json
 jobs_valid.json
 company_data.json
 delete.json
+company.json
+delete_request.json
 
 # Credentials (NEVER commit these)
 *.pem
