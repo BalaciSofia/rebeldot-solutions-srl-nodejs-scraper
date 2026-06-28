@@ -103,7 +103,7 @@ function mapToJobModel(rawJob, cif, companyName = COMPANY_NAME) {
     tags: rawJob.tags?.length ? rawJob.tags : undefined,
     workmode: rawJob.workmode || undefined,
     date: now,
-    status: "scraped"
+    status: 'activ'
   };
 
   Object.keys(job).forEach((k) => job[k] === undefined && delete job[k]);
